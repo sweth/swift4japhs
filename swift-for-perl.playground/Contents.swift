@@ -142,7 +142,7 @@ let explicitFloat: Float = 99.9
 let explicitDouble: Double = 99.9 // note that it evaluates to 99.90...01  --->
 let implicitDouble = 99.9 // implicitly cast as a double, which you can tell because of that same 99.90...01 --->
 let cannotDirectlyGetAnImplicitFloat = 99.9 // Swift assumes Double rather than Float, so again, 99.90...01 --->
-let implicitFloatViaConversion = Float(99.9)
+let implicitFloatViaConversion = Float(99.9) // more on conversion later
 
 /* TINHPDI: Other than initial implicit casting of types, Swift almost never DWIM. */
 
@@ -205,22 +205,12 @@ var explicitNestedTuple: (Int, (Int, String)) = (1, (2, "three"))
 
 /* Dictionaries -- unordered collection of key-value pairs, where keys all have same Type, and values all have same Type */
 
-/* Concatenation, Interpolation */
-/* TINHPDI: string interpolation is the same for all types, and drills down so Data::Dumper equivalents are
-   not as relevant. */
-print("\\() notation works on all parameter Types: Bool -> \(explicitBool)")
-print("\\() notation works on all parameter Types: String -> \(explicitString)")
-print("\\() notation works on all parameter Types: Int -> \(explicitInt)")
-print("\\() notation works on all parameter Types: Float -> \(explicitFloat)")
-print("\\() notation works on all parameter Types: Double -> \(explicitDouble)")
-print("\\() notation works on all parameter Types: IntStringTuple -> \(explicitIntStringTuple)")
-print("\\() notation works on all parameter Types: Nested Tuple -> \(explicitNestedTuple)")
-/* TINHPDI: String concat is +, not .  Similarly, string append is +=, not .= */
-print("Hello" + " " + "world!")
-
 /* Conversion */
 //? if let castDouble = Double(explicitFloat) { thing }
-
+//? String(explicitDouble)
+let stringFromInt = String(explicitInt)
+let stringFromDouble = String(Double(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
+let stringFromFloat = String(Float(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
 
 /* Flow Control */
 
@@ -257,7 +247,7 @@ myFunc(a: 1);
 
 /* Misc to sort */
 
-struct HellowWorld {
+struct HelloWorld {
     static func hello_testNoName( ) -> String { return "Hello, World!" } // cannot be overridden by child
     //    class func hello_testNoName2( ) -> String { return "Hello, World!" } // can be overridden by child
 }
@@ -266,3 +256,24 @@ struct HellowWorld {
 
 
 //func hello_testNoName( ) -> String { return "Hello, World!" }
+
+/* Concatenation, Interpolation */
+
+/* TINHPDI: string interpolation is the same for almost all types, and drills down so Data::Dumper equivalents are
+ not as relevant. */
+/* TINHPDI: interpolation includes some of what perl does via eval... */
+print("\\() notation works on most parameter Types: Bool -> \(explicitBool)")
+print("\\() notation works on most parameter Types: String -> \(explicitString)")
+print("\\() notation works on most parameter Types: Int -> \(explicitInt)")
+print("\\() notation works on most parameter Types: Float -> \(explicitFloat)")
+print("\\() notation works on most parameter Types: Double -> \(explicitDouble)")
+print("\\() notation works on most parameter Types: IntStringTuple -> \(explicitIntStringTuple)")
+print("\\() notation works on most parameter Types: Nested Tuple -> \(explicitNestedTuple)")
+// print("\(HelloWorld)") // nope
+// print("\(myFunc)") // nope.
+// print(myFunc(a: <#T##Int#>)) // nooope.
+
+/* TINHPDI: String concat is +, not .  Similarly, string append is +=, not .= */
+print("Hello" + " " + "world!")
+
+
