@@ -12,17 +12,31 @@ var str = "Hello, playground"
  */
 
 /* TINHPDI: The development environment and the code are pretty tightly coupled.
-   You can code Swift without XCode but it is much easier if you don't.  So much for your preferred text editor.
+   You can code Swift without XCode but it is much easier if you don't.
+   So: so much for your preferred text editor.
    (I assume EMacs has an XCode mode, because Emacs.)
  */
 
-/* <--- To the left is the Navigator panel. Use cmd-1 through cmd-8 to switch between navigators, or View->Navigators */
+/* In particular, XCode's playgrounds (of which this is an example) are a great way to learn Swift, so
+   let's start with a very quick tour of the playground UI itself.
+ */
 
-/* To the right is the Utilities panel. In a playground, the only Utility available is the Results sidebar, which shows
-   "the textual representation" of the value of each statement as it is executed.                                --->
+/* Code & Comments go in this center top area (the Editor area) */
 
-   If you hover over a line of code, the Results sidebar will let you Quick View the statement's value (the eye logo)
-   or Results View that value (the circle).
+/* <--- To the immediate left (still within this Editor area) is a vertical status bar.  If XCode detects an error
+   in your code, it will flag the problematic line(s) in red in the status bar. */
+
+/* <<<--- To the far left is the Navigator area.
+   If it isn't there, use cmd-0 or View->Navigators->Show Navigator or the leftmost button in the upper
+   right corner of the app.
+   Use cmd-1 through cmd-8 to switch between navigators, or View->Navigators
+ */
+
+/* To the right is the Results sidebar, which shows the "textual representation" of the value of each
+   statement as it is executed.                                                                  --->
+
+   If you hover over a line of code, the Results sidebar will let you Quick View the statement's value
+   (the eye logo) or Results View that value (the circle).
    * Results Sidebar shows a summary for code that is evaluated multiple times (e.g. functions and loops).
    * Quick View shows the latest value as a pop-up, including multiple values for tuples.  Useful when values are
      things like an image.
@@ -36,6 +50,11 @@ var str = "Hello, playground"
    XCode couldn't finish re-executing the playground.
  */
 
+/* To the far right is the Utilities area, which shows info like (GIT-aware) source control status,
+   plus some other useful tools when you are in a real XCode project rather than a playground.
+   If it isn't there, use the rightmost button in the upper right to reveal it.
+ */
+
 /* vvv At the bottom is the Debug Console.  Think of it as stdout / stderr combined, with XCode emitting lots of
    warnings to stderr that show up there, as well as doing in-line markup in red when errors are found.
    Annoyingly, Debug Console doesn't always update to show errors, so you sometimes have to scroll around in a
@@ -46,6 +65,9 @@ var str = "Hello, playground"
    an error.  If we leave those uncommented, then the Results sidebar doesn't update, and Quick
    Views and Results Views aren't generated.  Uncomment/recomment them one at a time to see the
    relevant errors.
+ 
+   I'm also using //? for placeholders for things I want to flesh out later.  Don't uncomment those, as they are
+   probably not functional code or even code at all.
  */
 
 /* I put terminology that I use but that aren't officially defined in the docs in quotes, e.g. the Swift docs define
@@ -54,11 +76,13 @@ var str = "Hello, playground"
    so I refer to them here as "Primitive" Types and "Extended" Types respectively.
  */
 
-/* TINHPDI: Swift's print is like Perl's say on steroids; it includes newline by default */
+/* TINHPDI: Swift's print is like Perl's say on steroids; it includes newline by default.  More on print later. */
 print(str)
-/* TINHPDI: \(string) to interpolate parameters into strings in Swift. */
+/* TINHPDI: \(string) to interpolate parameters into strings in Swift.  More on \() later, too. */
 print("\(str)!")
-// TINHPDI: *everything* needs parens in Swift. "consecutive statements on a line need ;" error often means missing parens.
+/* TINHPDI: *everything* needs parens in Swift. "consecutive statements on a line need ;" error often means missing parens.
+   Uncomment the next line to let XCode point out your error.
+ */
 // print str
 
 
