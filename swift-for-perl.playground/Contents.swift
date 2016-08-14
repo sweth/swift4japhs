@@ -88,7 +88,7 @@ print("\(str)!")
 
 /* TINHPDI: Every parameter is explicitly a Constant or a Variable */
 
-/* Constants vs Variables */
+/* Constants (Immutable parameters) vs Variables (Mutable parameters) */
 let constantString = "this is a constant"
 var variableString = "this is a variable"
 /* TINHPDI: XCode will offer to fix errors for you -- uncomment the line below see what happens */
@@ -193,8 +193,68 @@ var explicitNestedTuple: (Int, (Int, String)) = (1, (2, "three"))
 /* TINHPDI: Declaring an object as being of a Collection Type means declaring the Type of the object, and
    also the type of its contents */
 /* Arrays -- ordered collection of objects of the same type*/
+var explicitStringArray = ["one", "two", "three"]
+print(explicitStringArray[0]) // arrays are 0-based
 
-/* Mutable vs Immutable Collections */
+/* Mutable vs Immutable Collections -- collections defined with var can change their contents, but *not* the
+   Type of their contents; collections defined with let cannot change at all */
+var variableArray = ["one", "two", "three"]
+let constantArray = variableArray
+variableArray = ["foo"]
+// variableArray = [1]
+// constantArray = ["foo"]
+
+/* TINHPDI: scalar(@array) => .count method */
+print(explicitStringArray.count)
+/* .capacity is under-the-hood peek at number of array elements for which mem is allocated.  Usually same as .count but don't use it as a proxy for .count */
+print(explicitStringArray.capacity)
+/* TINHPDI: negative array indices not allowed; use .last or arithmetic on .count methods of array */
+// print(explicitStringArray[-1])
+print(explicitStringArray[explicitStringArray.count - 1])
+print(explicitStringArray.last)
+
+/* TINHPDI: no direct equivalent of full-featured splice().  Must use piecemeal tools below... */
+
+/* TINHPDI: pop() => .removeLast */
+var tmpArray: [String]
+tmpArray = explicitStringArray
+var poppedValue = tmpArray.removeLast()
+tmpArray.removeLast() // As with .pop, we don't need to do anything with returned value if goal is just to remove last value
+
+/* TINHPDI: push() => +=, or .append */
+tmpArray+=["Something Else"]
+// tmpArray+="Yet another something"
+/* ^^^ Note that you can only append an array literal (with square brackets) to an array.
+ The error message generated refers to converting a value of type '[String]' to 'inout String',
+ because by default the += operator is a string concat operator--based on its RHS being a string,
+ it is expecting what it sees on its LHS to be a string, not an array of strings like tmpArray.
+ */
+tmpArray+=["element1", "element2"] // += can append multiple elements, as long as they are part of one array literal argument
+// tmpArray+=["element3, ["element4", "element5"]] // however, all elements must still have same type, so cannot dynamically create a nested object.
+tmpArray.append("something")
+
+/* TINHPDI: most splice() equivs in Swift only take one arg:
+   unlike +=, array methods all take argument of appropriate Type object (rather than array literal) so cannot insert/append/remove multiple elements at once
+ */
+// tmpArray.append("arg1", "arg2")
+
+/* splice to insert/unshift => .insert */
+tmpArray.insert("foobar", atIndex: 0) // unshift
+// tmpArray.insert(["foo", "bar"], atIndex: 0) // again, only one element at a time
+
+/* splice to remove/shift => .removeAtIndex */
+tmpArray.removeAtIndex(0)
+
+/* clear array via assignment of empty literal, or .removeAll*/
+tmpArray = []
+tmpArray = explicitStringArray
+tmpArray.removeAll() // removeAll has keepCapacity optional arg to prevent deallocation of memory
+
+
+/* TINHPDI: no autovivification of array elements */
+tmpArray = ["foo"] // only tmpArray[0] exists
+// tmpArray[1] = "something" // inline error is EXC_BAD_INSTRUCTION, but debug console gives real error of "Index out of range"
+
 
 /* Sets -- unordered collection of objects of the same Type */
 //? Set<Element>
@@ -205,15 +265,20 @@ var explicitNestedTuple: (Int, (Int, String)) = (1, (2, "three"))
 
 /* Dictionaries -- unordered collection of key-value pairs, where keys all have same Type, and values all have same Type */
 
-/* Conversion */
+/* Type Conversion */
 //? if let castDouble = Double(explicitFloat) { thing }
 //? String(explicitDouble)
 let stringFromInt = String(explicitInt)
 let stringFromDouble = String(Double(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
 let stringFromFloat = String(Float(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
 
-/* Flow Control */
+/* Tests and Comparisons */
+explicitInt == implicitInt // a no-op, but it returns true...
+// explicitInt == explicitDouble
 
+/* Flow Control */
+//? if-else if-else
+//? switch-case-break-default ***
 //? Results view history of values
  
 /* Functions */
