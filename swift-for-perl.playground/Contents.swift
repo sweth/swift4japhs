@@ -7,10 +7,14 @@ var str = "Hello, playground"
 
 /* Swift uses double-slash inline comments and slash-star multiline comments */
 
-/* TINHPDI == This Is Not How Perl Does It.  I'll try to flag new/different concepts with that before giving an example of them. */
+/* TINHPDI == This Is Not How Perl Does It.  I'll try to flag new/different concepts with that label
+   before giving an example of them.  For example...
+ */
 
-/* TINHPDI: The development environment and the code are pretty tightly coupled.  You can code Swift without XCode but it
-   is much easier if you don't. */
+/* TINHPDI: The development environment and the code are pretty tightly coupled.
+   You can code Swift without XCode but it is much easier if you don't.  So much for your preferred text editor.
+   (I assume EMacs has an XCode mode, because Emacs.)
+ */
 
 /* <--- To the left is the Navigator panel. Use cmd-1 through cmd-8 to switch between navigators, or View->Navigators */
 
@@ -30,7 +34,6 @@ var str = "Hello, playground"
  
    Tip: if results/quick view are grey and you are not making changes, then you probably have an error somewhere so
    XCode couldn't finish re-executing the playground.
- 
  */
 
 /* vvv At the bottom is the Debug Console.  Think of it as stdout / stderr combined, with XCode emitting lots of
@@ -142,11 +145,11 @@ var implicitIntStringTuple = (1, "one") // declare as an ordered pair, first imp
 var explicitIntStringTuple: (Int, String)
 explicitIntStringTuple = (2, "two")
 // explicitIntStringTuple = (2, 2)
-/* The line below declares an (Int, Tuple), where the Tuple is an (Int, String); i.e. the line declares an (Int, (Int, String)) */
+/* The line below declares an (Int, Tuple), where the Tuple is an (Int, String); i.e. the line implicitly declares an (Int, (Int, String)) */
 var implicitNestedTuple = (1, explicitIntStringTuple)
 /* ^^^ Results view for a nested data struct lets you drill down... */
 
-
+var explicitNestedTuple: (Int, (Int, String)) = (1, (2, "three"))
 // implicitNestedTuple = (1, 2) // Can't assign (Int, Int) to (Int, (Int, String))
 /* ^^^ If you uncommment the line above, the error will say something like
  "failed: filename:linenum:charnum: error: cannot assign value of type 'Int' to type '(Int, String)'".
@@ -179,11 +182,16 @@ var implicitNestedTuple = (1, explicitIntStringTuple)
 /* Dictionaries -- unordered collection of key-value pairs, where keys all have same Type, and values all have same Type */
 
 /* Concatenation, Interpolation */
+/* TINHPDI: string interpolation is the same for all types, and drills down so Data::Dumper equivalents are
+   not as relevant. */
 print("\\() notation works on all parameter Types: Bool -> \(explicitBool)")
 print("\\() notation works on all parameter Types: String -> \(explicitString)")
 print("\\() notation works on all parameter Types: Int -> \(explicitInt)")
 print("\\() notation works on all parameter Types: Float -> \(explicitFloat)")
 print("\\() notation works on all parameter Types: Double -> \(explicitDouble)")
+print("\\() notation works on all parameter Types: IntStringTuple -> \(explicitIntStringTuple)")
+print("\\() notation works on all parameter Types: Nested Tuple -> \(explicitNestedTuple)")
+/* TINHPDI: String concat is +, not .  Similarly, string append is +=, not .= */
 print("Hello" + " " + "world!")
 
 /* Conversion */
@@ -196,24 +204,20 @@ print("Hello" + " " + "world!")
  
 /* Functions */
 
-struct HellowWorld {
-    static func hello_testNoName( ) -> String { return "Hello, World!" } // cannot be overridden by child
-//    class func hello_testNoName2( ) -> String { return "Hello, World!" } // can be overridden by child
-}
 
-//static func hello_testNoName( ) -> String { return "Hello, World!" }
+/* Function names behind the scenes are indexed by name as well as number of arguments */
+func myFunc(arg1: String) -> String { return arg1 } // defines a function named myFunc(_:)
 
-
-//func hello_testNoName( ) -> String { return "Hello, World!" }
-
-// this defines a function named myFunc(_:)
-func myFunc(arg1: String) -> String { return arg1 }
+/* ^^^ Results sidebar for this lists the number of times the function is evaluated, while Quick View shows the results of
+   each evaluation.  Results View shows result of last evaluation by default, but can right-click to get results of each
+   evaluation there as well. 
+ */
 
 //func myFunc(arg1: String) -> String { return arg1 }
 myFunc("one")
 myFunc("two")
 
-// this defines a function named myfunc(_:arg2) -- different name so no redeclaration error
+/* this defines a function named myfunc(_:arg2) -- different name so no redeclaration error */
 func myFunc(arg1: String, arg2: String) -> String { return arg1 + arg2 }
 
 //myFunc(1);
@@ -221,8 +225,20 @@ myFunc("one");
 //myFunc("one", "two");
 myFunc("one", arg2: "two");
 
-// this defines a function named myFunc(a:)
+/* this defines a function named myFunc(a:) */
 func myFunc(a arg1: Int) -> String { return "a is \(arg1)" }
 myFunc("one");
 myFunc(a: 1);
 //myFunc(arg1: "one");
+
+/* Misc to sort */
+
+struct HellowWorld {
+    static func hello_testNoName( ) -> String { return "Hello, World!" } // cannot be overridden by child
+    //    class func hello_testNoName2( ) -> String { return "Hello, World!" } // can be overridden by child
+}
+
+//static func hello_testNoName( ) -> String { return "Hello, World!" }
+
+
+//func hello_testNoName( ) -> String { return "Hello, World!" }
