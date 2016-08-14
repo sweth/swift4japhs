@@ -341,4 +341,9 @@ print("\\() notation works on most parameter Types: Nested Tuple -> \(explicitNe
 /* TINHPDI: String concat is +, not .  Similarly, string append is +=, not .= */
 print("Hello" + " " + "world!")
 
+//? optional types
+//? ?? operator
+//? if-let vs guard
+//? decompose tuples -- let (statusCode, statusMessage) = http404Error
+//? ignore decomposed elements with _ -- let (firstName, _, lastName) = firstMiddleLastNames
 
