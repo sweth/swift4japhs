@@ -100,6 +100,9 @@ print("\(str)!")
 /* Constants (Immutable parameters) vs Variables (Mutable parameters) */
 let constantString = "this is a constant"
 var variableString = "this is a variable"
+/* TINHPDI: as a matter of style, Swift programmers seem to create params as constants by default, and
+   only switch from let to var when they need to */
+ 
 /* TINHPDI: XCode will offer to fix errors for you -- uncomment the line below see what happens */
 // constantString = "can I change this constant?"
 variableString = "how about this variable?"
@@ -128,23 +131,48 @@ let historicCBool: DarwinBoolean = true
 let objCBool: ObjCBool = true
 /* DarwinBoolean was called Boolean in earlier versions of Swift, and confusion between Bool and Boolean
    caused problems.  Swift 2 renamed the historic one, but XCode suggests correcting Boolean to DarwinBoolean
-   rather than to Bool, which is almost never the right choice...
+   rather than to Bool, which is almost never the right choice.  Uncomment the line below to see that bad
+   suggestion in action. vvv
  */
 // let notABool: Boolean = true
+let boolTrue = true
+let boolFalse = !boolTrue
+// let otherBoolFalse = ! boolTrue // Swift cares about spaces, sometimes annoyingly so. But XCode knows enough to fix it!
 
 /* Strings */
 var implicitString = "foo"
 var explicitString: String = "foo"
 // explicitString = 1 // Cannot assign an Int to a String
 // implicitString = 1 // Doesn't matter if initial declaration used explicit or implicit Type
+
 /* TINHPDI: Everything is an object, with methods you can call */
+/* TINHPDI: Perl params can be undefined or have empty values.  Swift params can be uninitialized (similar to undefined),
+ have values that are empty, or have a value of nil... however, by default, they cannot have a value of nil, either. */
+
+/* Empty Parameters */
 var emptyString = ""
 if emptyString.isEmpty {
-    print("emptyString is empty!")
+    print("emptyString is empty; test returned \(emptyString.isEmpty)!")
 }
 if implicitString.isEmpty {
     print("implicitString is empty!") // Note how the Results sidebar is blank for this line as it is not evaluated
+} else {
+    print("implicitString is not empty; test returned \(implicitString.isEmpty)!")
 }
+
+/* Uninitialized Parameters */
+var uninitializedString: String
+// print("We cannot do anything with an uninitialized parameter other than assign to it: \(uninitializedString.isEmpty)")
+
+/* Nils and Optionals */
+// var nilString = nil // first error: type is ambiguous
+// var nilString:String = nil // second error: cannot initialize with nil
+// var nilString:String = "" ; nilString = nil // third error: cannot assign nil
+/* So what good is the nil value?  Every Type has a subtype that is an nil-tolerant variant of the parent, called an Optional.
+   e.g. instead of a String, we should could declare nilString to be an "Optional String" */
+var nilString:String? = nil
+var implicitNilString = nilString // note that while nil is type-ambiguous, optionals are not, and can be used for implicit typing
+ 
 /* Cool XCode features!
  You can also option-click and command-click on parameters to see useful info about them and/or change them
  in cool ways.
@@ -304,22 +332,120 @@ let stringFromInt = String(explicitInt)
 let stringFromDouble = String(Double(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
 let stringFromFloat = String(Float(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
 
-/*********************************/
-/*     Tests and Comparisons     */
-/*********************************/
+/************************************************/
+/*     Tests, Comparisons, and Flow Control     */
+/************************************************/
 
 /* Comparisons */
 explicitInt == implicitInt // a no-op, but as in Perl, it evaluates to true
 /* TINHPDI: cannot compare things of different types */
 // explicitInt == explicitDouble
 
-/************************/
-/*     Flow Control     */
-/************************/
-
 /* Flow Control */
-//? if / else if / else
-//? switch / case / break / default ***
+/* TINHPDI: conditionals in Swift do not take parens if they return a Bool (though the parens don't hurt) */
+/* TINHPDI: Swift does not support trailing conditionals like "{ foo } if bar" */
+let flowControlTestString = "Swift Flow Control" // 18 chars long
+if !flowControlTestString.isEmpty {
+    print("flowControlTestString \(flowControlTestString) is not empty!")
+}
+if flowControlTestString.characters.count < 10 {
+    print("flowControlTestString \(flowControlTestString) is under 10 chars in length!")
+} else if flowControlTestString.characters.count < 15 {
+    print("flowControlTestString \(flowControlTestString) is under 15 chars in length!")
+} else {
+    print("flowControlTestString \(flowControlTestString) is 15 or more chars in length!")
+}
+/* TINHPDI: Swift has switch/case and its implementation is pretty cool */
+/* Switch can take any Type as the Input Expression and/or the case statements' Expression Pattern,
+   though if there is a Type mismatch you'll need to account for that.
+ 
+   (Behind the scenes: the Input Expression is compared to the case statement's Expression
+   Pattern via the ~= operator, and if "Input Expression ~= Expression Pattern" evaluates
+   to true then the case matches... and you can overload the ~= operator.  Pretty cool.)
+ 
+   Note that cases are first-match-wins, even if there is overlap between them.
+ 
+   The only real restriction is that between them, the cases must be exhaustive,
+   either directly or via a default case.
+ */
+
+switch flowControlTestString.isEmpty {
+case true:
+    print("flowControlTestString is empty")
+case false:
+    print("flowControlTestString is not empty")
+} // compiler can tell this is exhaustive so it is ok
+
+// switch flowControlTestString {
+// case "Bob":
+//     print("flowControlTestString is Bob")
+// } // not exhaustive so this will throw an error
+
+switch flowControlTestString {
+case "Bob":
+    print("flowControlTestString is Bob")
+default:
+    print("flowControlTestString is not Bob")
+} // exhaustive so this is also fine
+
+switch flowControlTestString.characters.count {
+case 1:
+    print("1!")
+case 2:
+    print("2!")
+case 3...8:
+    print("Between 3 and 8 inclusive!")
+case 8..<18:
+    print("Between 8 and 17 inclusive!")
+case 15...20:
+    print("Between 15 and 20 inclusive!")
+default:
+    print("Default case matched!")
+}
+
+/* Compare a tuple rather than a single value */
+let point = (-1, 2)
+switch point {
+case (0, 0):
+    print("(0, 0) is at the origin.")
+case (-2...2, -2...2):
+    print("(\(point.0), \(point.1)) is near the origin.")
+default:
+    print("The point is at (\(point.0), \(point.1)).")
+}
+
+/* Ignore elements of a tuple in a specific case statement */
+switch point {
+case (0, 0):
+    print("(0, 0) is at the origin.")
+case (_, 2):
+    print("(\(point.0), \(point.1)) has a Y-value of 2.")
+default:
+    print("The point is at (\(point.0), \(point.1)).")
+}
+
+/* Note that ignoring all elements of a tuple is the same as a default statement, and if you have both, XCode will warn you but NOT throw an error. */
+switch point {
+case (0, 0):
+    print("(0, 0) is at the origin.")
+case (_, _):
+    print("We are ignoring both tuple values")
+default:
+    print("The point is at (\(point.0), \(point.1)).")
+}
+
+/* Overload the ~= operator to compare the tuple's integers against a case's strings */
+func ~=(pattern: String, value: Int) -> Bool {
+    return pattern == "\(value)" // compare arg1 (pattern) to stringified version of arg2 (input value)
+}
+switch point {
+case ("0", "0"):
+    print("(0, 0) is at the origin.")
+default:
+    print("The point is at (\(point.0), \(point.1)).")
+}
+
+//? loops
 //? Results view history of values
 
 /*********************/
