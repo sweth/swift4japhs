@@ -5,6 +5,10 @@ import UIKit
 var str = "Hello, playground"
 /* The stuff above this line comes with every new playground... */
 
+/******************************/
+/*      INTRO INFORMATION     */
+/******************************/
+
 /* Swift uses double-slash inline comments and slash-star multiline comments */
 
 /* TINHPDI == This Is Not How Perl Does It.  I'll try to flag new/different concepts with that label
@@ -36,10 +40,11 @@ var str = "Hello, playground"
    statement as it is executed.                                                                  --->
 
    If you hover over a line of code, the Results sidebar will let you Quick View the statement's value
-   (the eye logo) or Results View that value (the circle).
+   (the eye logo) or Results View that value (the circle); these views are often textual representations
+   but can be graphical when that makes more sense.
    * Results Sidebar shows a summary for code that is evaluated multiple times (e.g. functions and loops).
-   * Quick View shows the latest value as a pop-up, including multiple values for tuples.  Useful when values are
-     things like an image.
+   * Quick View shows the latest value as a pop-up, including multiple values for tuples.
+     Useful when values are things like an image.
    * Results View shows the value inline with the code, and can show the latest value
      OR a history of values.
  
@@ -50,8 +55,9 @@ var str = "Hello, playground"
    XCode couldn't finish re-executing the playground.
  */
 
-/* To the far right is the Utilities area, which shows info like (GIT-aware) source control status,
-   plus some other useful tools when you are in a real XCode project rather than a playground.
+/* To the far right is the Utilities area, which has a File Inspector that shows info like (GIT-aware)
+   source control status, plus some other useful tools when you are in a real XCode project rather than
+   a playground, as well as a Quick Help mode that lets you look up documentation on language elements.
    If it isn't there, use the rightmost button in the upper right to reveal it.
  */
 
@@ -85,6 +91,9 @@ print("\(str)!")
  */
 // print str
 
+/*********************************/
+/*     Parameters and Objects    */
+/*********************************/
 
 /* TINHPDI: Every parameter is explicitly a Constant or a Variable */
 
@@ -99,18 +108,21 @@ variableString = "how about this variable?"
 /* TINHPDI: Everything is strongly typed. */
 
 /* Everything has a type.  It can be a Named Type or a Compound Type.
-   Named Types include:
-   * "Primitive" Types: Bool, String, Int, Float, and Double
-   * Collection Types: Array, Set, Dictionary
-   * "Extended" Types such as Struct, Class, Enum, or Protocol, as well as user-defined Named Types
-   Compound Types are:
-   * Tuples
-   * Functions
+   * Named Types include:
+     * "Primitive" Types: Bool, String, Int, Float, and Double
+     * Collection Types: Array, Set, Dictionary
+     * "Extended" Types such as Struct, Class, Enum, or Protocol, as well as user-defined Named Types
+   * Compound Types are:
+     * Tuples
+     * Functions
  */
 
+/* Primitive Types: Bool / String / Int / Float / Double */
+
 /* Booleans */
-let implicitBool = true // declare constant, implicitly cast as a Bool, and assign a Bool to it
 let explicitBool: Bool = true // declare constant as Bool via "type annotation", and assign a Bool to it
+let implicitBool = true // declare constant, implicitly cast as a Bool, and assign a Bool to it
+
 /* Swift has a lot of things that exist for compat with "historic" C and Obj-C */
 let historicCBool: DarwinBoolean = true
 let objCBool: ObjCBool = true
@@ -133,6 +145,24 @@ if emptyString.isEmpty {
 if implicitString.isEmpty {
     print("implicitString is empty!") // Note how the Results sidebar is blank for this line as it is not evaluated
 }
+/* Cool XCode features!
+ You can also option-click and command-click on parameters to see useful info about them and/or change them
+ in cool ways.
+ * For example, option-click on "anotherImplicitString" below to see that the declaration
+   is being translated to "var anotherImplicitString: Bool" (rather than as a String) well as which file it
+   is declared in.
+ * Using option-click on other language elements like "Bool" or "String" give you "quick help" on those
+   elements, as if you were viewing that element in the Utilities->Quick Help panel mentioned at the beginning.
+ * Then command-click on the "implicitBool" below to be taken to the place where it is in fact declared,
+   as well as subtly highlighting every instance of that parameter that is in the current scope.
+ * Once a parameter declaration is selected via command-click, hold down command and hover over the declaration
+   or any of the highlighted mentions in-scope. A dropdown menu triangle will appear to the right of the parameter
+   name; selecting it will give you access to the OSX Services menu, as well as offering an option to "Edit All
+   In Scope".  The latter lets you edit the parameter name in one place, and have the change propogate to every
+   other instance of the parameter within the same scope
+ */
+var anotherImplicitString = implicitBool // oops!
+
 
 /* Numbers -- Int, Float, and Double */
 let explicitInt: Int = 99
@@ -152,46 +182,11 @@ let doublePointOneFourOneFiveNine = 0.14159
 // let naiveFakePi = intThree + doublePointOneFourOneFiveNine
 let fakePi = Double(intThree) + doublePointOneFourOneFiveNine
 
-
-
-
-
-/* TINHPDI: By default no parameter can be undefined */
-
-
-/* Tuples -- ordered list of objects where Type of each position in list can be declared to be different */
-
-var implicitIntIntTuple = (1,2) // declare as an ordered pair, both positions implicitly cast as integers, and assigns two integers to it
-/* ^^^ Note that the Results views for a tuple gives indices as well as values.
-   But note that you can Quick View any item in the results View above to get just the value
- */
-var implicitIntStringTuple = (1, "one") // declare as an ordered pair, first implicitly as Int, second implicitly as String, and assigns
-var explicitIntStringTuple: (Int, String)
-explicitIntStringTuple = (2, "two")
-// explicitIntStringTuple = (2, 2)
-/* The line below declares an (Int, Tuple), where the Tuple is an (Int, String); i.e. the line implicitly declares an (Int, (Int, String)) */
-var implicitNestedTuple = (1, explicitIntStringTuple)
-/* ^^^ Results view for a nested data struct lets you drill down... */
-
-var explicitNestedTuple: (Int, (Int, String)) = (1, (2, "three"))
-// implicitNestedTuple = (1, 2) // Can't assign (Int, Int) to (Int, (Int, String))
-/* ^^^ If you uncommment the line above, the error will say something like
- "failed: filename:linenum:charnum: error: cannot assign value of type 'Int' to type '(Int, String)'".
- It might seem confusing at first, because you are trying to assign to an (Int, Tuple), not an (Int, String).
+/* Collection Types: Array / Set / Dictionary */
  
- You are actually assigning an (Int, Int) to an (Int, (Int, String)), though, or looked at another way, you
- are assigning the first Int to an Int, and then the second Int to the (Int, String) Tuple; the first assignment
- succeeds, and so the error is only for the attempt to assign the second Int to that Tuple.
- 
- Some indicators of the fact that the problem is with the second assignment are that both the Debug Console and the
- in-line error markup put a caret under the problematic second Int, and also that the Debug Console gives you a 
- character position on the line that also references that second Int.
- */
-
-
-/* Collection Types */
 /* TINHPDI: Declaring an object as being of a Collection Type means declaring the Type of the object, and
    also the type of its contents */
+ 
 /* Arrays -- ordered collection of objects of the same type*/
 var explicitStringArray = ["one", "two", "three"]
 print(explicitStringArray[0]) // arrays are 0-based
@@ -265,6 +260,43 @@ tmpArray = ["foo"] // only tmpArray[0] exists
 
 /* Dictionaries -- unordered collection of key-value pairs, where keys all have same Type, and values all have same Type */
 
+/* Extended Types: Struct, Class, Enum, Protocol, and ANYTHING ELSE YOU WANT OR THAT LIBS PROVIDE */
+
+/* notice how XCode's text eval of a UIImage is its dimensions */
+var imageOne = UIImage(named: "clownshoe.jpg")
+/* exercise for the reader: drag surprise.jpg from the Images folder in this repo into the Resources folder in this playground, and assign it to a var.  notice how as you type the relevant code, XCode gives you syntax hints and will auto-complete if you let it. */
+
+/* Compound Types: Tuples & Functions */
+/* Tuples -- ordered list of objects where Type of each position in list can be declared to be different */
+
+var implicitIntIntTuple = (1,2) // declare as an ordered pair, both positions implicitly cast as integers, and assigns two integers to it
+/* ^^^ Note that the Results views for a tuple gives indices as well as values.
+ But note that you can Quick View any item in the results View above to get just the value
+ */
+var implicitIntStringTuple = (1, "one") // declare as an ordered pair, first implicitly as Int, second implicitly as String, and assigns
+var explicitIntStringTuple: (Int, String)
+explicitIntStringTuple = (2, "two")
+// explicitIntStringTuple = (2, 2)
+/* The line below declares an (Int, Tuple), where the Tuple is an (Int, String); i.e. the line implicitly declares an (Int, (Int, String)) */
+var implicitNestedTuple = (1, explicitIntStringTuple)
+/* ^^^ Results view for a nested data struct lets you drill down... */
+
+var explicitNestedTuple: (Int, (Int, String)) = (1, (2, "three"))
+// implicitNestedTuple = (1, 2) // Can't assign (Int, Int) to (Int, (Int, String))
+/* ^^^ If you uncommment the line above, the error will say something like
+ "failed: filename:linenum:charnum: error: cannot assign value of type 'Int' to type '(Int, String)'".
+ It might seem confusing at first, because you are trying to assign to an (Int, Tuple), not an (Int, String).
+ 
+ You are actually assigning an (Int, Int) to an (Int, (Int, String)), though, or looked at another way, you
+ are assigning the first Int to an Int, and then the second Int to the (Int, String) Tuple; the first assignment
+ succeeds, and so the error is only for the attempt to assign the second Int to that Tuple.
+ 
+ Some indicators of the fact that the problem is with the second assignment are that both the Debug Console and the
+ in-line error markup put a caret under the problematic second Int, and also that the Debug Console gives you a
+ character position on the line that also references that second Int.
+ */
+
+ 
 /* Type Conversion */
 //? if let castDouble = Double(explicitFloat) { thing }
 //? String(explicitDouble)
@@ -272,16 +304,27 @@ let stringFromInt = String(explicitInt)
 let stringFromDouble = String(Double(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
 let stringFromFloat = String(Float(explicitInt)) // note the trailing ".0" added when stringifying from a Double/Float
 
-/* Tests and Comparisons */
-explicitInt == implicitInt // a no-op, but it returns true...
+/*********************************/
+/*     Tests and Comparisons     */
+/*********************************/
+
+/* Comparisons */
+explicitInt == implicitInt // a no-op, but as in Perl, it evaluates to true
+/* TINHPDI: cannot compare things of different types */
 // explicitInt == explicitDouble
 
+/************************/
+/*     Flow Control     */
+/************************/
+
 /* Flow Control */
-//? if-else if-else
-//? switch-case-break-default ***
+//? if / else if / else
+//? switch / case / break / default ***
 //? Results view history of values
- 
-/* Functions */
+
+/*********************/
+/*     Functions     */
+/*********************/
 
 
 /* Function names behind the scenes are indexed by name as well as number of arguments */
@@ -310,7 +353,9 @@ myFunc("one");
 myFunc(a: 1);
 //myFunc(arg1: "one");
 
-/* Misc to sort */
+/************************/
+/*     Misc to sort     */
+/************************/
 
 struct HelloWorld {
     static func hello_testNoName( ) -> String { return "Hello, World!" } // cannot be overridden by child
@@ -341,7 +386,7 @@ print("\\() notation works on most parameter Types: Nested Tuple -> \(explicitNe
 /* TINHPDI: String concat is +, not .  Similarly, string append is +=, not .= */
 print("Hello" + " " + "world!")
 
-//? optional types
+//? optional types /* TINHPDI: By default no parameter can be undefined */
 //? ?? operator
 //? if-let vs guard
 //? decompose tuples -- let (statusCode, statusMessage) = http404Error
