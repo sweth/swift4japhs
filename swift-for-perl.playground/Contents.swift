@@ -11,6 +11,10 @@ var str = "Hello, playground"
 
 /* Swift uses double-slash inline comments and slash-star multiline comments */
 
+/* REOP == Rough Equivalent of Perl. e.g.
+   Swift // is REOP #
+ */
+
 /* TINHPDI == This Is Not How Perl Does It.  I'll try to flag new/different concepts with that label
    before giving an example of them.  For example...
  */
@@ -46,7 +50,7 @@ var str = "Hello, playground"
    * Quick View shows the latest value as a pop-up, including multiple values for tuples.
      Useful when values are things like an image.
    * Results View shows the value inline with the code, and can show the latest value
-     OR a history of values.
+     OR a history of values (as a graph when relevant)
  
    When text in the Results Sidebar or a Results View / Quick View is grey, that means that it is "old" text, and
    XCode is waiting for you to finish making changes so that it can re-execute the playground and give you new results.)
@@ -83,11 +87,13 @@ var str = "Hello, playground"
  */
 
 /* TINHPDI: Swift's print is like Perl's say on steroids; it includes newline by default.  More on print later. */
-print(str)
-/* TINHPDI: \(string) to interpolate parameters into strings in Swift.  More on \() later, too. */
+print(str) // REOP say($str)
+/* TINHPDI: Swift uses double-quotes for string literals, and by default there is no interpolation inside of them */
+print("str")
+/* TINHPDI: \(string) to interpolate parameters into string literals in Swift.  More on \() later, too. */
 print("\(str)!")
 /* TINHPDI: *everything* needs parens in Swift. "consecutive statements on a line need ;" error often means missing parens.
-   Uncomment the next line to let XCode point out your error.
+   Uncomment the next line to let XCode point out your error, and suggest an incorrect fix of adding a semicolon.
  */
 // print str
 
@@ -98,10 +104,12 @@ print("\(str)!")
 /* TINHPDI: Every parameter is explicitly a Constant or a Variable */
 
 /* Constants (Immutable parameters) vs Variables (Mutable parameters) */
-let constantString = "this is a constant"
-var variableString = "this is a variable"
+let constantString = "this is a constant" // REOP use Const::Fast; const constantString => "something"
+var variableString = "this is a variable" // REOP my $variableString = "something"
 /* TINHPDI: as a matter of style, Swift programmers seem to create params as constants by default, and
-   only switch from let to var when they need to */
+   only switch from let to var when they need to.  This might be inherited from functional programming
+   langs that influenced Swift's development.
+ */
  
 /* TINHPDI: XCode will offer to fix errors for you -- uncomment the line below see what happens */
 // constantString = "can I change this constant?"
@@ -140,8 +148,8 @@ let boolFalse = !boolTrue
 // let otherBoolFalse = ! boolTrue // Swift cares about spaces, sometimes annoyingly so. But XCode knows enough to fix it!
 
 /* Strings */
-var implicitString = "foo"
-var explicitString: String = "foo"
+var implicitString = "this is implicitly cast as a string"
+var explicitString: String = "this is explicitly declared as a string"
 // explicitString = 1 // Cannot assign an Int to a String
 // implicitString = 1 // Doesn't matter if initial declaration used explicit or implicit Type
 
@@ -216,8 +224,24 @@ let fakePi = Double(intThree) + doublePointOneFourOneFiveNine
    also the type of its contents */
  
 /* Arrays -- ordered collection of objects of the same type*/
-var explicitStringArray = ["one", "two", "three"]
-print(explicitStringArray[0]) // arrays are 0-based
+var explicitStringArray: Array<String>
+// explicitStringArray = [1, 2, 3] // cannot assign non-string values to an array whose element type is string
+// print(explicitStringArray.count) // Not yet initialized so this is an error
+explicitStringArray = ["this", "was", "explicitly", "declared", "as", "an", "array", "of", "strings"]
+print(explicitStringArray.count)
+/* The command below uses = rather than : and adds the trailing parens to initialize the parameter
+   i.e. it is assigning an empty string array.  The Array<String>() assignment is referred to in
+   Swift as using an Initializer
+ */
+var stringArrayPreinitialized = Array<String>()
+print(stringArrayPreinitialized.count)
+var stringArrayUninitializedShorthand: [String] // [Type] is shorthand for Array<Type>
+var stringArrayPreinitializedShorthand = [String]() // This works both in type annotation above as well as in Initializers
+// Initializers can also include very primitive seed values for an array, as long as they are all the same
+var stringArrayWithSeeding = [String](count: 5, repeatedValue: "bob") // REOP my @stringArrayWithSeeding = ("bob") x 5
+
+var implicitStringArray = ["this", "is", "implicitly", "declared", "as", "an", "array", "of", "strings"]
+print(explicitStringArray[2]) // arrays are 0-based
 
 /* Mutable vs Immutable Collections -- collections defined with var can change their contents, but *not* the
    Type of their contents; collections defined with let cannot change at all */
@@ -276,7 +300,7 @@ tmpArray.removeAll() // removeAll has keepCapacity optional arg to prevent deall
 
 /* TINHPDI: no autovivification of array elements */
 tmpArray = ["foo"] // only tmpArray[0] exists
-// tmpArray[1] = "something" // inline error is EXC_BAD_INSTRUCTION, but debug console gives real error of "Index out of range"
+// tmpArray[1] = "something" // inline error is EXC_BAD_INSTRUCTION, but debug console gives more meaningful error of "Index out of range"
 
 
 /* Sets -- unordered collection of objects of the same Type */
@@ -287,9 +311,38 @@ tmpArray = ["foo"] // only tmpArray[0] exists
 /* TINHPDI: use a Set rather than a Hash to ensure unique values if there are not natural key-value pairs */
 
 /* Dictionaries -- unordered collection of key-value pairs, where keys all have same Type, and values all have same Type */
+//? dicts return optional items, arrays do not
 
 /* Extended Types: Struct, Class, Enum, Protocol, and ANYTHING ELSE YOU WANT OR THAT LIBS PROVIDE */
 
+//? Struct
+
+//? Class
+
+//? Enum
+
+/* Protocols */
+/* Protocols are basically templates that define a set of behavior that an object must follow in order to be
+   compliant with that protocol.  e.g. the implementation of the 1...5 sequence notation complies with the
+   SequenceType protocol, which says that anything that wants to claim to be a sequence has to have a .generator()
+   method that returns an object compliant with the GeneratorType protocol (which in turn just says that anything
+   that wants to claim to be a generator must have a .next() method that optionally returns some type of element
+   that is the next member of the sequence; anything that can provide those two behaviors can produce a sequence
+   of elements that can be iterated over, and thus can claim to be a sequence:
+
+   protocol SequenceType {
+       func generate() -> GeneratorType
+   }
+   protocol GeneratorType {
+       func next() -> Element?
+   }
+
+   Those protocols are already defined so uncommenting them will throw an error, and I am too lazy to craft a full
+   example from scratch at the moment. :)
+ 
+ */
+
+/* User-/Library-Defined Types */
 /* notice how XCode's text eval of a UIImage is its dimensions */
 var imageOne = UIImage(named: "clownshoe.jpg")
 /* exercise for the reader: drag surprise.jpg from the Images folder in this repo into the Resources folder in this playground, and assign it to a var.  notice how as you type the relevant code, XCode gives you syntax hints and will auto-complete if you let it. */
@@ -445,13 +498,87 @@ default:
     print("The point is at (\(point.0), \(point.1)).")
 }
 
-//? loops
-//? Results view history of values
+/* While Loops */
+var whileLoopIndex = 0
+while whileLoopIndex < 10 {
+    whileLoopIndex += 1 // Swift 2 has ++ operator, but Swift 3 gets rid of it
+    whileLoopIndex * whileLoopIndex
+}
+
+/* C-Style For Loops (deprecated but not yet EOLed) */
+for (var forLoopIndex = 0; forLoopIndex < 10; forLoopIndex += 1) {
+    forLoopIndex * forLoopIndex
+}
+
+/* Enumerated For Loops */
+/* Creates temp variables without needing to declare them */
+for enumeratedForLoopIndex in 1...10 {
+    enumeratedForLoopIndex * enumeratedForLoopIndex
+}
+// enumeratedForLoopIndex // outside of loop, this var is undeclared and cannot be referenced
+/* Can safely re-use temp variable name */
+for enumeratedForLoopIndex in 1...5 {
+    enumeratedForLoopIndex
+}
+/* Note: cannot provide a tuple as thing to enumerate.  It must be a "sequence object", or technically
+   an object that implements the SequenceType protocol--either something using the built-in sequence syntax like
+   1...5, or a Type that mimics the behavior of that type of sequence by providing .generate() and .next() methods.
+   Tuples, though lists of elements, don't provide those methods; Arrays (or array literals), however, do, so you
+   can enumerate them.
+ */
+for enumeratedForLoopIndex in [1,2,5] {
+    enumeratedForLoopIndex
+}
+let enumeratableArray = [1,2,3,4]
+for enumeratedForLoopIndex in enumeratableArray {
+    enumeratedForLoopIndex
+}
+/* Just want to repeat something a number of times, so you don't care about the loop index value?
+   Use _ for any transient parameters that you want to ignore.
+ */
+for _ in 1...2 {
+    print("Who cares about the index?")
+}
+for ignoredIndex in 1..<2 {
+    print("Ignoring the index but leaving it named also works, but is frowned on")
+}
+
+
 
 /*********************/
 /*     Functions     */
 /*********************/
 
+/* TINHPDI:
+   functions in Swift must have the type of each argument defined
+   by default the first argument is unnamed when invoking the function
+   if there is more than one argument, by default all arguments other than first one must be named when invoking the function.
+   functions in Swift cannot return anything unless you explicitly define a return type in the opening of the function
+ */
+
+/* general function syntax:
+   func <functionName>([<argumentName1>: <argumentType1>, ... <argumentNameN>: <argumentTypeN>])
+        [-> <returnType>] {
+            <functionDefinition>
+        }
+ */
+
+// func returnVoid() { return 1 } // cannot return anything if we don't have a returnType defined
+// func returnString() -> String { return 1 } // cannot return an Int when we say we will return a String
+
+func repeatString(stringToRepeat: String) -> String { return stringToRepeat + stringToRepeat }
+repeatString("foo")
+
+func repeatStringNTimes(stringToRepeat: String, timesToRepeat: Int) -> String {
+    var outputString = ""
+    for _ in (1...timesToRepeat) { // if you name an unused loop var inside a function, XCode will suggest you change it to _
+        outputString += stringToRepeat
+    }
+    return outputString
+}
+// repeatStringNTimes("foo", 4) // without the label for the second argument, this throws an error
+repeatStringNTimes("foo", timesToRepeat: 4)
+// repeatStringNTimes(stringToRepeat:"foo", timesToRepeat: 4) // first argument must be unnamed
 
 /* Function names behind the scenes are indexed by name as well as number of arguments */
 func myFunc(arg1: String) -> String { return arg1 } // defines a function named myFunc(_:)
@@ -495,9 +622,8 @@ struct HelloWorld {
 
 /* Concatenation, Interpolation */
 
-/* TINHPDI: string interpolation is the same for almost all types, and drills down so Data::Dumper equivalents are
- not as relevant. */
-/* TINHPDI: interpolation includes some of what perl does via eval... */
+/* TINHPDI: string interpolation is the same for almost all types, and drills down.
+   Thus,Data::Dumper equivalents are not as relevant in Swift. */
 print("\\() notation works on most parameter Types: Bool -> \(explicitBool)")
 print("\\() notation works on most parameter Types: String -> \(explicitString)")
 print("\\() notation works on most parameter Types: Int -> \(explicitInt)")
@@ -505,15 +631,26 @@ print("\\() notation works on most parameter Types: Float -> \(explicitFloat)")
 print("\\() notation works on most parameter Types: Double -> \(explicitDouble)")
 print("\\() notation works on most parameter Types: IntStringTuple -> \(explicitIntStringTuple)")
 print("\\() notation works on most parameter Types: Nested Tuple -> \(explicitNestedTuple)")
+/* TINHPDI: interpolation operator can be used to evaluate code inside a string a la Perl's
+   Babycart Operator @{[ ]}
+   http://search.cpan.org/dist/perlsecret/lib/perlsecret.pod#Baby_cart
+ */
+print("\(repeatString(explicitString)) again") // REOP say "@{[repeatString($explicitString)]} again"
+
+/* Note that the code-eval feature of \() means that it can't be used to inspect code objects like structs or functions */
 // print("\(HelloWorld)") // nope
 // print("\(myFunc)") // nope.
 // print(myFunc(a: <#T##Int#>)) // nooope.
 
-/* TINHPDI: String concat is +, not .  Similarly, string append is +=, not .= */
+/* String concat is +   REOP .
+   String append is +=  REOP .=
+ */
 print("Hello" + " " + "world!")
 
 //? optional types /* TINHPDI: By default no parameter can be undefined */
 //? ?? operator
+//? ?. vs .
+//? ?. chaining
 //? if-let vs guard
 //? decompose tuples -- let (statusCode, statusMessage) = http404Error
 //? ignore decomposed elements with _ -- let (firstName, _, lastName) = firstMiddleLastNames
