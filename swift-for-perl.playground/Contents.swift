@@ -5,6 +5,19 @@ import UIKit
 var str = "Hello, playground"
 /* The stuff above this line comes with every new playground... */
 
+/* https://github.com/sweth/swift4japhs/
+   (This playground is for Swift 2.2.)
+
+   Swift is Objective-C + Pascal + lessons learned + a development environment
+   Swift tries to make 30 years of errors illegal at the language level
+ 
+   Very roughly:
+ 
+     Swift : Obj-C :: Perl6 : Perl5
+
+ 
+ */
+
 /******************************/
 /*      INTRO INFORMATION     */
 /******************************/
@@ -15,8 +28,7 @@ var str = "Hello, playground"
    Swift // is REOP #
  */
 
-/* TINHPDI == This Is Not How Perl Does It.  I'll try to flag new/different concepts with that label
-   before giving an example of them.  For example...
+/* TINHPDI == This Is Not How Perl Does It.  I'll try to flag new/different concepts with that label before giving an example of them.  For example...
  */
 
 /* TINHPDI: The development environment and the code are pretty tightly coupled.
@@ -25,18 +37,15 @@ var str = "Hello, playground"
    (I assume EMacs has an XCode mode, because Emacs.)
  */
 
-/* In particular, XCode's playgrounds (of which this is an example) are a great way to learn Swift, so
-   let's start with a very quick tour of the playground UI itself.
+/* In particular, XCode's playgrounds (of which this is an example) are a great way to learn Swift, so let's start with a very quick tour of the playground UI itself.
  */
 
 /* Code & Comments go in this center top area (the Editor area) */
 
-/* <--- To the immediate left (still within this Editor area) is a vertical status bar.  If XCode detects an error
-   in your code, it will flag the problematic line(s) in red in the status bar. */
+/* <--- To the immediate left (still within this Editor area) is a vertical status bar.  If XCode detects an error in your code, it will flag the problematic line(s) in red in the status bar. */
 
 /* <<<--- To the far left is the Navigator area.
-   If it isn't there, use cmd-0 or View->Navigators->Show Navigator or the leftmost button in the upper
-   right corner of the app.
+   If it isn't there, use cmd-0 or View->Navigators->Show Navigator or the leftmost button in the upper right corner of the app.
    Use cmd-1 through cmd-8 to switch between navigators, or View->Navigators
  */
 
@@ -483,7 +492,7 @@ case (0, 0):
     print("(0, 0) is at the origin.")
 case (_, _):
     print("We are ignoring both tuple values")
-default:
+default: // Note the warning
     print("The point is at (\(point.0), \(point.1)).")
 }
 
@@ -652,6 +661,22 @@ print("Hello" + " " + "world!")
 //? ?. vs .
 //? ?. chaining
 //? if-let vs guard
+//? closures
 //? decompose tuples -- let (statusCode, statusMessage) = http404Error
 //? ignore decomposed elements with _ -- let (firstName, _, lastName) = firstMiddleLastNames
+/*
+ * Unicode-safe from the get-go:
+ * let π = 3.14159
+ * let 你好 = "你好世界"
+ * let 🐶🐮 = "dogcow"
+ * Strings are "extended grapheme clusters"
+ * Series of human-readable characters
+ * To break a string down into characters, don't split it up by bytes.  Access its characters property
+ * myString.characters
+ * To count the characters, access the count property of its characters property
+ * myString.characters.count
+ * myString.isEmpty
+ */
+
+
 
